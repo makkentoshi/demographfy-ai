@@ -26,6 +26,8 @@ interface WorldBankDataItem {
 const MainTheme: React.FC = () => {
   const [populationData, setPopulationData] = useState<PopulationData[]>([]);
   const [predictedData, setPredictedData] = useState<PopulationData[]>([]);
+  const [startYear, setStartYear] = useState(1974);
+  const [endYear, setEndYear] = useState(1988);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,7 +36,6 @@ const MainTheme: React.FC = () => {
           "https://api.worldbank.org/v2/country/KZ/indicator/SP.POP.TOTL?format=json"
         );
 
-     
         console.log("API Response:", response.data);
 
         // Проверяем, что ответ содержит данные
@@ -49,7 +50,7 @@ const MainTheme: React.FC = () => {
 
           console.log("Filtered Population Data:", data);
           setPopulationData(data);
-          await getGeminiPredictions(data); 
+          await getGeminiPredictions(data);
         } else {
           console.error("No data available from API");
         }
@@ -81,16 +82,18 @@ const MainTheme: React.FC = () => {
         throw new Error("API key is not set");
       }
 
-      // Подключаемся к Gemini
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = generatePrompt(data);
 
       const result = await model.generateContent(prompt);
-      const geminiResponse = result.response.text();
+      const geminiResponse = await result.response.text();
+
+      console.log("Gemini Response:", geminiResponse);
 
       const futurePredictions = parseGeminiResponse(geminiResponse);
+      console.log("Parsed Predictions:", futurePredictions); //
       setPredictedData(futurePredictions);
     } catch (error) {
       console.error("Error getting predictions from Gemini:", error);
@@ -100,18 +103,21 @@ const MainTheme: React.FC = () => {
   // Функция для обработки ответа Gemini и преобразования в нужный формат
 
   const parseGeminiResponse = (response: string): PopulationData[] => {
-    const lines = response.split("\n");
+    console.log("Raw Gemini Response:", response);
+
     const predictions: PopulationData[] = [];
+    const lines = response.split("\n");
 
     lines.forEach((line) => {
-      const match = line.match(/Year: (\d+), Population: (\d+)/);
+      const match = line.match(/\|\s*(\d{4})\s*\|\s*(\d+)\s*\|/);
       if (match) {
         const year = parseInt(match[1]);
-        const population = parseFloat(match[2]);
+        const population = parseInt(match[2]);
         predictions.push({ year, population });
       }
     });
 
+    console.log("Parsed Predictions:", predictions); // Отладка: выводим парсенные данные
     return predictions;
   };
 
@@ -146,28 +152,54 @@ const MainTheme: React.FC = () => {
   //     setPredictedData(futurePredictions);
   //   };
 
+  const filteredData = [...populationData, ...predictedData].filter(
+    (item) => item.year >= startYear && item.year <= endYear
+  );
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl mb-4">Прогнозирование населения Казахстана</h1>
 
-      {/* График */}
+      <div className="mb-4">
+        <label>
+          Start Year:
+          <input
+            type="number"
+            value={startYear}
+            onChange={(e) => setStartYear(parseInt(e.target.value))}
+            className="ml-2 p-1 border"
+          />
+        </label>
+        <label className="ml-4">
+          End Year:
+          <input
+            type="number"
+            value={endYear}
+            onChange={(e) => setEndYear(parseInt(e.target.value))}
+            className="ml-2 p-1 border"
+          />
+        </label>
+      </div>
 
-      <div className="w-full h-96">
-        <ResponsiveContainer>
-          <LineChart data={[...populationData, ...predictedData]}>
+      <div className="w-full h-[500px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" />
-
+            <XAxis dataKey="year" tick={{ fontSize: 12 }} />
             <YAxis
-              domain={[0, 25000000]}
+              domain={[10000000, 25000000]}
               tickFormatter={(tick) => tick.toLocaleString()}
+              tickCount={4}
+              tick={{ fontSize: 12 }}
             />
-            <Tooltip />
+            <Tooltip formatter={(value) => value.toLocaleString()} />
             <Line
               type="monotone"
               dataKey="population"
               stroke="#5BB1D9FF"
               activeDot={{ r: 8 }}
+              dot={{ r: 4 }}
+              strokeWidth={2}
             />
           </LineChart>
         </ResponsiveContainer>
