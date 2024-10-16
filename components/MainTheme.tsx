@@ -52,7 +52,7 @@ const MainTheme: React.FC = () => {
   const [predictedUnemploymentData, setPredictedUnemploymentData] = useState<
     EconomicData[]
   >([]);
-  const [setPredictedInflationData, setPredictedInflationData] = useState<
+  const [predictedInflationData, setPredictedInflationData] = useState<
     EconomicData[]
   >([]);
   const [startYear, setStartYear] = useState(1991);
@@ -181,12 +181,12 @@ const MainTheme: React.FC = () => {
     const historicalData = data
       .map((item) => `Year: ${item.year}, Population: ${item.population}`)
       .join("\n");
-
-    return `Analyze the following historical population data for Kazakhstan and predict the population for the years 2026, 2028, 2030, 2032, and 2034:
-
+  
+    return `Analyze the following historical population data for Kazakhstan and predict the population for each year from 2023 to 2030:
+  
     ${historicalData}
-
-    Based on these trends, what is the projected population for the given years? Provide your predictions in a structured format.`;
+  
+    Based on these trends, what is the projected population for each year in the given range? Provide your predictions in a structured format.`;
   };
 
   const generateEconomicPrompt = (gdpData: EconomicData[]): string => {
@@ -377,10 +377,10 @@ const MainTheme: React.FC = () => {
 
   const parsePopulationResponse = (response: string): PopulationData[] => {
     console.log("Raw Population Gemini Response:", response);
-
+  
     const predictions: PopulationData[] = [];
     const lines = response.split("\n");
-
+  
     lines.forEach((line) => {
       const match = line.match(/\|\s*(\d{4})\s*\|\s*(\d+)\s*\|/);
       if (match) {
@@ -389,8 +389,8 @@ const MainTheme: React.FC = () => {
         predictions.push({ year, population });
       }
     });
-
-    console.log("Parsed Predictions:", predictions);
+  
+    console.log("Parsed Population Predictions:", predictions);
     return predictions;
   };
 
