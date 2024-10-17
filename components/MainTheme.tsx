@@ -10,6 +10,12 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  BarChart,
+  Bar,
 } from "recharts";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -57,6 +63,8 @@ const MainTheme: React.FC = () => {
   >([]);
   const [startYear, setStartYear] = useState(1991);
   const [endYear, setEndYear] = useState(2024);
+  const [gdpStartYear, setGdpStartYear] = useState(1991);
+  const [gdpEndYear, setGdpEndYear] = useState(2030);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -108,6 +116,7 @@ const MainTheme: React.FC = () => {
             .sort((a: EconomicData, b: EconomicData) => a.year - b.year);
 
           setGdpData(gdpData);
+          console.log(gdpData, "gdpDdata:");
         }
 
         if (gdpPerCapitaResponse.data && gdpPerCapitaResponse.data.length > 1) {
@@ -165,7 +174,7 @@ const MainTheme: React.FC = () => {
         setCombinedEconomicData(combinedData);
 
         await getPopulationPredictions(popData);
-        await getEconomicPredictions(combinedData);
+        await getEconomicPredictions(gdpData);
         await getPerCapitaPredictions(gdpPerCapitaData);
         await getUnemploymentPredictions(unemploymentData);
         await getInflationPredictions(inflationData);
@@ -181,7 +190,7 @@ const MainTheme: React.FC = () => {
     const historicalData = data
       .map((item) => `Year: ${item.year}, Population: ${item.population}`)
       .join("\n");
-  
+
     return `Analyze the following historical population data for Kazakhstan and predict the population for each year from 2023 to 2030:
   
     ${historicalData}
@@ -189,16 +198,24 @@ const MainTheme: React.FC = () => {
     Based on these trends, what is the projected population for each year in the given range? Provide your predictions in a structured format.`;
   };
 
-  const generateEconomicPrompt = (gdpData: EconomicData[]): string => {
-    const historicalData = gdpData
+  const generateEconomicPrompt = (data: EconomicData[]): string => {
+    const historicalData = data
       .map((item) => `Year: ${item.year}, GDP: ${item.gdp}`)
       .join("\n");
 
-    return `Analyze the following economic data for Kazakhstan from 1991 to 2024:
+    return `Based on global economic data and current trends, please model and imagine one possible scenario for Kazakhstan's GDP from 2023 to 2030. Let these be most likely scenario. When developing scenario, consider the following factors:
 
+Global economic conditions: changes in oil prices, international trade and geopolitical risks.
+Domestic policy: government spending, fiscal and monetary policy, as well as possible structural reforms in Kazakhstan.
+Technological innovations: the introduction of new technologies and the development of industries.
+Dependence on natural resources: Kazakhstan, being an economy based on oil and gas, is vulnerable to fluctuations in the prices of these goods.
+Demographic factors: expected population growth and changes in its age structure.
+Unexpected events: pandemics, crises or unpredictable geopolitical events.
+Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely scenario with approximate figures of GDP growth/decline for each year in the period from 2023 to 2030. Specify the estimated GDP values in the scenario, even if this is hypothetical.
+  
     ${historicalData}
-
-    Predict the GDP for the years 2025, 2027, and 2029.`;
+  
+   `;
   };
 
   const generatePerCapitaPrompt = (data: EconomicData[]): string => {
@@ -210,7 +227,7 @@ const MainTheme: React.FC = () => {
 
     ${historicalData}
 
-    Predict the GDP per Capita for the years 2025, 2027, and 2029.`;
+    Based on these trends, what is the projected GDP per Capita for each year in the given range? Predict the GDP per Capita for each year from 2023 to 2030.`;
   };
 
   const generateUnemploymentPrompt = (data: EconomicData[]): string => {
@@ -221,11 +238,11 @@ const MainTheme: React.FC = () => {
       )
       .join("\n");
 
-    return `Analyze the following historical unemployment rate data for Kazakhstan and predict the unemployment rate for the years 2026, 2028, 2030, 2032, and 2034:
+    return `Analyze the following historical unemployment rate data for Kazakhstan:
   
     ${historicalData}
   
-    Provide insights on trends and potential future changes in the unemployment rate.`;
+    Provide insights on trends and potential future changes in the unemployment rate for each year from 2023 to 2030.`;
   };
 
   const generateInflationPrompt = (data: EconomicData[]): string => {
@@ -235,11 +252,11 @@ const MainTheme: React.FC = () => {
       )
       .join("\n");
 
-    return `Analyze the following historical inflation rate data for Kazakhstan and predict the inflation rate for the years 2026, 2028, 2030, 2032, and 2034:
+    return `Analyze the following historical inflation rate data for Kazakhstan:
   
     ${historicalData}
   
-    Provide insights on trends and potential future changes in the inflation rate.`;
+    Provide insights on trends and potential future changes in the inflation rate for each year from 2023 to 2030.`;
   };
 
   {
@@ -377,10 +394,10 @@ const MainTheme: React.FC = () => {
 
   const parsePopulationResponse = (response: string): PopulationData[] => {
     console.log("Raw Population Gemini Response:", response);
-  
+
     const predictions: PopulationData[] = [];
     const lines = response.split("\n");
-  
+
     lines.forEach((line) => {
       const match = line.match(/\|\s*(\d{4})\s*\|\s*(\d+)\s*\|/);
       if (match) {
@@ -389,7 +406,7 @@ const MainTheme: React.FC = () => {
         predictions.push({ year, population });
       }
     });
-  
+
     console.log("Parsed Population Predictions:", predictions);
     return predictions;
   };
@@ -401,10 +418,12 @@ const MainTheme: React.FC = () => {
     const lines = response.split("\n");
 
     lines.forEach((line) => {
-      const match = line.match(/\|\s*(\d{4})\s*\|\s*(\d+)\s*\|/);
+      const match = line.match(
+        /\|\s*(\d{4})\s*\|\s*[\d.]+%\s*\|\s*([\d.]+)\s*\|/
+      );
       if (match) {
         const year = parseInt(match[1]);
-        const gdp = parseInt(match[2]);
+        const gdp = parseFloat(match[2]) * 1e9;
         predictions.push({ year, gdp });
       }
     });
@@ -412,7 +431,6 @@ const MainTheme: React.FC = () => {
     console.log("Parsed Economic Predictions:", predictions);
     return predictions;
   };
-
   const parsePerCapitaResponse = (response: string): EconomicData[] => {
     console.log("Raw Per Capita Gemini Response:", response);
 
@@ -470,10 +488,28 @@ const MainTheme: React.FC = () => {
     return predictions;
   };
 
+  const renderBarChart = (data: EconomicData[]) => (
+    <BarChart width={500} height={300} data={data}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+      <YAxis
+        tickFormatter={(tick) => tick.toLocaleString()}
+        tick={{ fontSize: 8 }}
+      />
+      <Tooltip formatter={(value) => value.toLocaleString()} />
+      <Legend />
+      <Bar dataKey="gdp" fill="#8884d8" />
+    </BarChart>
+  );
+
   const filteredPopulationData = [
     ...populationData,
     ...predictedPopulationData,
   ].filter((item) => item.year >= startYear && item.year <= endYear);
+
+  const filteredGdpData = [...gdpData, ...predictedEconomicData].filter(
+    (item) => item.year >= gdpStartYear && item.year <= gdpEndYear
+  );
 
   return (
     <div className="container mx-auto p-4">
@@ -504,7 +540,7 @@ const MainTheme: React.FC = () => {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={filteredPopulationData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" tick={{ fontSize: 12 }} />
+            <XAxis dataKey="year" tick={{ fontSize: 11 }} />
             <YAxis
               domain={[10000000, 25000000]}
               tickFormatter={(tick) => tick.toLocaleString()}
@@ -521,6 +557,33 @@ const MainTheme: React.FC = () => {
               strokeWidth={2}
             />
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl mb-4">Столбчатая диаграмма ВВП</h2>
+        <div className="mb-4">
+          <label>
+            C какого года:
+            <input
+              type="number"
+              value={gdpStartYear}
+              onChange={(e) => setGdpStartYear(parseInt(e.target.value))}
+              className="ml-2 p-1 border text-black"
+            />
+          </label>
+          <label className="ml-4">
+            По какой год:
+            <input
+              type="number"
+              value={gdpEndYear}
+              onChange={(e) => setGdpEndYear(parseInt(e.target.value))}
+              className="ml-2 p-1 border text-black"
+            />
+          </label>
+        </div>
+        <ResponsiveContainer width="100%" height={300}>
+          {renderBarChart(filteredGdpData)}
         </ResponsiveContainer>
       </div>
     </div>
