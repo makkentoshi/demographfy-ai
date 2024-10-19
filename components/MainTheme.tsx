@@ -203,19 +203,31 @@ const MainTheme: React.FC = () => {
       .map((item) => `Year: ${item.year}, GDP: ${item.gdp}`)
       .join("\n");
 
-    return `Based on global economic data and current trends, please model and imagine one possible scenario for Kazakhstan's GDP from 2023 to 2030. Let these be most likely scenario. When developing scenario, consider the following factors:
-
-Global economic conditions: changes in oil prices, international trade and geopolitical risks.
-Domestic policy: government spending, fiscal and monetary policy, as well as possible structural reforms in Kazakhstan.
-Technological innovations: the introduction of new technologies and the development of industries.
-Dependence on natural resources: Kazakhstan, being an economy based on oil and gas, is vulnerable to fluctuations in the prices of these goods.
-Demographic factors: expected population growth and changes in its age structure.
-Unexpected events: pandemics, crises or unpredictable geopolitical events.
-Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely scenario with approximate figures of GDP growth/decline for each year in the period from 2023 to 2030. Specify the estimated GDP values in the scenario, even if this is hypothetical.
+    return `
+  Based on global economic data and current trends, please generate a stable and realistic forecast for Kazakhstan's GDP from 2023 to 2030. 
+  This forecast should include both growth and potential periods of slight decline to reflect real-world fluctuations. 
+  The format of the table should remain consistent throughout, without variations. 
   
-    ${historicalData}
+  When developing the scenario, consider the following key factors:
   
-   `;
+  1. **Global economic conditions:** Fluctuations in oil prices, changes in international trade, and geopolitical risks.
+  2. **Domestic policy:** Government spending, fiscal and monetary policy, and potential structural reforms in Kazakhstan.
+  3. **Technological innovations:** The impact of new technologies on industries and economic growth.
+  4. **Dependence on natural resources:** Kazakhstan's vulnerability to shifts in oil and gas prices, along with efforts to diversify the economy.
+  5. **Demographic factors:** Expected population growth and changes in the age structure.
+  6. **Unexpected events:** Possibilities of pandemics, financial crises, or unpredictable geopolitical events that could impact the economy.
+  
+  **Important:** 
+  - The table should remain consistent and in the following format: 
+    | Year | GDP Growth (%) | Estimated GDP (Billion USD) |
+    |---|---|---| 
+  - Provide GDP values in billions of USD.
+  - Ensure that not all years show growth; include at least a few years with a slight decline or stagnation to make the forecast more realistic.
+  
+  Please use the historical data below as a reference point:
+  
+  ${historicalData}
+    `;
   };
 
   const generatePerCapitaPrompt = (data: EconomicData[]): string => {
@@ -263,7 +275,13 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
     /*  Analyze the following demographic and economic data for Kazakhstan from 1991 to 2024. How do demographic changes impact economic indicators such as GDP and unemployment? Predict future trends for the years 2025, 2027, and 2029.*/
   }
 
-  const getPopulationPredictions = async (popData: PopulationData[]) => {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const getPopulationPredictions = async (
+    popData: PopulationData[],
+    delayMs: number = 2000
+  ) => {
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
       if (!apiKey) {
@@ -274,6 +292,9 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
       const prompt = generatePopulationPrompt(popData);
+
+      console.log("Waiting for delay before request...");
+      await delay(delayMs);
 
       const result = await model.generateContent(prompt);
       const geminiResponse = await result.response.text();
@@ -288,7 +309,10 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
     }
   };
 
-  const getEconomicPredictions = async (gdpData: EconomicData[]) => {
+  const getEconomicPredictions = async (
+    gdpData: EconomicData[],
+    delayMs: number = 2000
+  ) => {
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
       if (!apiKey) {
@@ -300,6 +324,7 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
 
       const prompt = generateEconomicPrompt(gdpData);
 
+      await delay(delayMs); // Задержка перед запросом
       const result = await model.generateContent(prompt);
       const geminiResponse = await result.response.text();
 
@@ -312,7 +337,12 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
       console.error("Error getting economic predictions from Gemini:", error);
     }
   };
-  const getPerCapitaPredictions = async (data: EconomicData[]) => {
+
+
+  const getPerCapitaPredictions = async (
+    data: EconomicData[],
+    delayMs: number = 2000
+  ) => {
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
       if (!apiKey) {
@@ -324,6 +354,7 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
 
       const prompt = generatePerCapitaPrompt(data);
 
+      await delay(delayMs);
       const result = await model.generateContent(prompt);
       const geminiResponse = await result.response.text();
 
@@ -337,7 +368,11 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
     }
   };
 
-  const getUnemploymentPredictions = async (data: EconomicData[]) => {
+
+  const getUnemploymentPredictions = async (
+    data: EconomicData[],
+    delayMs: number = 2000
+  ) => {
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
       if (!apiKey) {
@@ -349,6 +384,7 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
 
       const prompt = generateUnemploymentPrompt(data);
 
+      await delay(delayMs);
       const result = await model.generateContent(prompt);
       const geminiResponse = await result.response.text();
 
@@ -365,7 +401,10 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
     }
   };
 
-  const getInflationPredictions = async (data: EconomicData[]) => {
+  const getInflationPredictions = async (
+    data: EconomicData[],
+    delayMs: number = 2000
+  ) => {
     try {
       const apiKey = process.env.NEXT_PUBLIC_API_KEY;
       if (!apiKey) {
@@ -377,6 +416,7 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
 
       const prompt = generateInflationPrompt(data);
 
+      await delay(delayMs);
       const result = await model.generateContent(prompt);
       const geminiResponse = await result.response.text();
 
@@ -390,7 +430,6 @@ Based on these data, predict the dynamics of Kazakhstan's GDP in most-likely sce
     }
   };
 
-  // Функция для обработки ответа Gemini и преобразования в нужный формат
 
   const parsePopulationResponse = (response: string): PopulationData[] => {
     console.log("Raw Population Gemini Response:", response);

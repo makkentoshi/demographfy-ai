@@ -127,12 +127,12 @@ const Header = () => {
                         >
                           {/*Logo*/}
                           <div className="mb-2 mt-4 text-lg font-medium">
-                            shadcn/ui
+                            Demographfy
                           </div>
                           <p className="text-sm leading-tight text-muted-foreground">
-                            Beautifully designed components that you can copy
-                            and paste into your apps. Accessible. Customizable.
-                            Open Source.
+                            Веб-сайт для прогнозирования, статистики и анализа
+                            данных о демографических процессах Республики
+                            Казахстан с использованием Gemini AI.
                           </p>
                         </a>
                       </NavigationMenuLink>
