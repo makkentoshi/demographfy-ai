@@ -137,18 +137,18 @@ const Header = () => {
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/docs" title="Introduction">
-                      Re-usable components built using Radix UI and Tailwind
-                      CSS.
+                    <ListItem href="/docs" title="Информация">
+                      Общая информация о проекте и анализе демографических
+                      процессах.
                     </ListItem>
-                    <ListItem href="/docs/installation" title="Installation">
-                      How to install dependencies and structure your app.
+                    <ListItem href="/docs/installation" title="FAQ">
+                      Самые задаваемые вопросы.
                     </ListItem>
                     <ListItem
                       href="/docs/primitives/typography"
-                      title="Typography"
+                      title="Подробнее..."
                     >
-                      Styles for headings, paragraphs, lists...etc
+                      О создателе и проекте.
                     </ListItem>
                   </ul>
                 </NavigationMenuContent>
