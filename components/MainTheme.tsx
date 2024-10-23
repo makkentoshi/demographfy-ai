@@ -35,6 +35,7 @@ interface EconomicData {
   gdpPerCapita?: number;
   unemploymentRate?: number;
   inflationRate?: number;
+  gdpGrowth?: number;
 }
 
 const MainTheme: React.FC = () => {
@@ -219,8 +220,8 @@ const MainTheme: React.FC = () => {
   
   **Important:** 
   - The table should remain consistent and in the following format: 
-    | Year | GDP Growth (%) | Estimated GDP (Billion USD) |
-    |---|---|---| 
+   | Year | Estimated GDP (Billion USD) |
+   |---|---| 
   - Provide GDP values in billions of USD.
   - Ensure that not all years show growth; include at least a few years with a slight decline or stagnation to make the forecast more realistic.
   
@@ -235,13 +236,31 @@ const MainTheme: React.FC = () => {
       .map((item) => `Year: ${item.year}, GDP per Capita: ${item.gdpPerCapita}`)
       .join("\n");
 
-    return `Analyze the following GDP per Capita data for Kazakhstan from 1991 to 2024:
-
-    ${historicalData}
-
-    Based on these trends, what is the projected GDP per Capita for each year in the given range? Predict the GDP per Capita for each year from 2023 to 2030.`;
+    return `
+  Based on global economic data and current trends, please generate a stable and realistic forecast for Kazakhstan's GDP per Capita from 2023 to 2030. 
+  This forecast should include growth and potential risks that reflect real-world fluctuations . 
+  The format of the table should remain consistent throughout, without variations. 
+  
+  When developing the scenario, consider the following key factors:
+  
+  1. **Global economic conditions:** Fluctuations in oil prices, changes in international trade, and geopolitical risks.
+  2. **Domestic policy:** Government spending, fiscal and monetary policy, and potential structural reforms in Kazakhstan.
+  3. **Technological innovations:** The impact of new technologies on industries and economic growth.
+  4. **Dependence on natural resources:** Kazakhstan's vulnerability to shifts in oil and gas prices, along with efforts to diversify the economy.
+  5. **Demographic factors:** Expected population growth and changes in the age structure.
+  6. **Unexpected events:** Possibilities of pandemics, financial crises, or unpredictable geopolitical events that could impact the economy.
+  
+  **Important:** 
+  - The table should remain consistent and in the following format: 
+    | Year | GDP per Capita Growth (%) | Estimated GDP per Capita (USD) |
+    |---|---|---| 
+  - Provide GDP per Capita values in USD.
+  
+  Please use the historical data below as a reference point:
+  
+  ${historicalData}
+    `;
   };
-
   const generateUnemploymentPrompt = (data: EconomicData[]): string => {
     const historicalData = data
       .map(
@@ -250,11 +269,30 @@ const MainTheme: React.FC = () => {
       )
       .join("\n");
 
-    return `Analyze the following historical unemployment rate data for Kazakhstan:
+    return `
+    Based on historical data and current trends, please generate a stable and realistic forecast for Kazakhstan's unemployment rate from 2023 to 2030. 
+    The format of the table should remain consistent throughout, without variations. 
   
+    When developing the scenario, consider the following key factors of KAZAKHSTAN ( most new factors ):
+    
+    1. **Economic diversification:** Ongoing efforts to reduce dependency on natural resources and increase employment in sectors like services, agriculture, and manufacturing.
+    2. **Education and workforce development:** The quality of education, vocational training, and reskilling programs affecting labor market adaptability.
+    3. **Population trends:** Demographic factors such as labor force growth, aging population, and migration patterns.
+    4. **Government policies:** Labor market regulations, employment programs, and social safety nets aimed at reducing unemployment.
+    5. **Technological changes:** The impact of automation, digitalization, and innovation on the availability of jobs in various sectors.
+    6. **Global economic conditions:** External shocks, changes in trade policies, and geopolitical risks that could affect Kazakhstan's economy and employment rates.
+    7. **Unexpected events:** Potential risks like financial crises, pandemics, or natural disasters that could disrupt employment trends.
+  
+    **Important:** 
+    - The table should remain consistent and follow this format: 
+      | Year | Unemployment Rate (%) |
+      |---|---| 
+    - Provide unemployment rate values in percentage format.
+  
+    Please use the historical data below as a reference point:
+    
     ${historicalData}
-  
-    Provide insights on trends and potential future changes in the unemployment rate for each year from 2023 to 2030.`;
+    `;
   };
 
   const generateInflationPrompt = (data: EconomicData[]): string => {
@@ -338,7 +376,6 @@ const MainTheme: React.FC = () => {
     }
   };
 
-
   const getPerCapitaPredictions = async (
     data: EconomicData[],
     delayMs: number = 2000
@@ -367,7 +404,6 @@ const MainTheme: React.FC = () => {
       console.error("Error getting per capita predictions from Gemini:", error);
     }
   };
-
 
   const getUnemploymentPredictions = async (
     data: EconomicData[],
@@ -430,7 +466,6 @@ const MainTheme: React.FC = () => {
     }
   };
 
-
   const parsePopulationResponse = (response: string): PopulationData[] => {
     console.log("Raw Population Gemini Response:", response);
 
@@ -457,12 +492,10 @@ const MainTheme: React.FC = () => {
     const lines = response.split("\n");
 
     lines.forEach((line) => {
-      const match = line.match(
-        /\|\s*(\d{4})\s*\|\s*[\d.]+%\s*\|\s*([\d.]+)\s*\|/
-      );
+      const match = line.match(/\|\s*(\d{4})\s*\|\s*([\d.]+)\s*\|/);
       if (match) {
         const year = parseInt(match[1]);
-        const gdp = parseFloat(match[2]) * 1e9;
+        const gdp = parseFloat(match[2]) * 1e9; // Конвертируем значение ВВП в миллиарды
         predictions.push({ year, gdp });
       }
     });
@@ -470,6 +503,7 @@ const MainTheme: React.FC = () => {
     console.log("Parsed Economic Predictions:", predictions);
     return predictions;
   };
+
   const parsePerCapitaResponse = (response: string): EconomicData[] => {
     console.log("Raw Per Capita Gemini Response:", response);
 
@@ -493,14 +527,17 @@ const MainTheme: React.FC = () => {
     console.log("Raw Unemployment Gemini Response:", response);
 
     const predictions: EconomicData[] = [];
-    const lines = response.split("\n");
+    const lines = response
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line); // Удаляем пустые строки
 
     lines.forEach((line) => {
-      const match = line.match(/\|\s*(\d{4})\s*\|\s*(\d+)\s*\|/);
+      const match = line.match(/\|\s*(\d{4})\s*\|\s*([\d.]+)\s*\|/); // Обратите внимание на использование [\d.]+ для извлечения процентов
       if (match) {
         const year = parseInt(match[1]);
-        const unemploymentRate = parseFloat(match[2]);
-        predictions.push({ year, gdp: 0, unemploymentRate });
+        const unemploymentRate = parseFloat(match[2]); // Конвертируем в число
+        predictions.push({ year, gdp: 0, unemploymentRate }); // GDP оставляем равным 0
       }
     });
 
@@ -550,6 +587,14 @@ const MainTheme: React.FC = () => {
     (item) => item.year >= gdpStartYear && item.year <= gdpEndYear
   );
 
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
+  const renderLabel = (entry: EconomicData) => {
+    return `${
+      entry.unemploymentRate ? entry.unemploymentRate.toFixed(2) : "N/A"
+    }% (${entry.year})`;
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl mb-4">Прогнозирование населения Казахстана</h1>
@@ -561,7 +606,7 @@ const MainTheme: React.FC = () => {
             type="number"
             value={startYear}
             onChange={(e) => setStartYear(parseInt(e.target.value))}
-            className="ml-2 p-1 border text-black"
+            className="ml-2 p-1 border text-black rounded-md"
           />
         </label>
         <label className="ml-4">
@@ -570,7 +615,7 @@ const MainTheme: React.FC = () => {
             type="number"
             value={endYear}
             onChange={(e) => setEndYear(parseInt(e.target.value))}
-            className="ml-2 p-1 border text-black"
+            className="ml-2 p-1 border text-black rounded-md"
           />
         </label>
       </div>
@@ -608,7 +653,7 @@ const MainTheme: React.FC = () => {
               type="number"
               value={gdpStartYear}
               onChange={(e) => setGdpStartYear(parseInt(e.target.value))}
-              className="ml-2 p-1 border text-black"
+              className="ml-2 p-1 border text-black rounded-md"
             />
           </label>
           <label className="ml-4">
@@ -617,12 +662,39 @@ const MainTheme: React.FC = () => {
               type="number"
               value={gdpEndYear}
               onChange={(e) => setGdpEndYear(parseInt(e.target.value))}
-              className="ml-2 p-1 border text-black"
+              className="ml-2 p-1 border text-black rounded-md"
             />
           </label>
         </div>
         <ResponsiveContainer width="100%" height={300}>
           {renderBarChart(filteredGdpData)}
+        </ResponsiveContainer>
+      </div>
+      <div className="mt-20">
+        <h2 className="text-xl mb-4">
+          Круговая диаграмма уровня безработицы Казахстана
+        </h2>
+        <ResponsiveContainer width="100%" height={700}>
+          <PieChart>
+            <Pie
+              data={unemploymentData}
+              dataKey="unemploymentRate"
+              nameKey="year"
+              cx="50%"
+              cy="50%"
+              outerRadius={300}
+              fill="#8884d8"
+              label={renderLabel}
+            >
+              {unemploymentData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
         </ResponsiveContainer>
       </div>
     </div>
