@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as tf from "@tensorflow/tfjs";
 import {
   LineChart,
   Line,
