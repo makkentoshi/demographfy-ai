@@ -3,36 +3,31 @@ import { FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="border-t  py-[2rem]">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4">
-        <div className="text-slate-400 text-lg font-mono">
-          © 2024 Demographfy
+    <footer className="bg-gray-50 border-t border-gray-200">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid md:grid-cols-4 gap-8">
+          <div className="col-span-2">
+            <h3 className="text-xl font-bold mb-4 text-gray-900">О проекте</h3>
+            <p className="text-gray-600 max-w-md">
+              Платформа для анализа демографических процессов Казахстана с
+              использованием современных технологий и методов анализа данных
+            </p>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Контакты</h3>
+            <div className="space-y-2">
+              <p className="text-gray-600">Email: markiscoding.co@gmail.com</p>
+              <p className="text-gray-600">Тел: +7 (700) 736-93-02</p>
+              <p className="text-gray-600">Павлодар, Казахстан</p>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Спасибо</h3>
+            <p>За проявленную возможность показать свою работу и поддержать проект :) я очень это ценю.</p>
+          </div>
         </div>
-
-     
-        <div className="flex space-x-6 mt-4 md:mt-0">
-          <Link
-            href="https://www.instagram.com/makkentosh1"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-400 hover:text-slate-900"
-          >
-            <FaInstagram size={24} />
-          </Link>
-
-          <Link
-            href="https://wa.me/+77007369302"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-slate-400 hover:text-slate-900"
-          >
-            <FaWhatsapp size={24} />
-          </Link>
-        </div>
-
-        {/* Contact Information */}
-        <div className="mt-4 md:mt-0 text-slate-400 text-sm font-mono">
-          <p>WhatsApp: +7 700 736 9302</p>
+        <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+          © 2024 KZ Demographics. Все права защищены.
         </div>
       </div>
     </footer>

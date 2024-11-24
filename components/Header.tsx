@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { texts } from "./text";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,6 +12,9 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import Image from "next/image";
+import Logo from "./Logo";
+import { MenuIcon, XIcon } from "lucide-react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -41,64 +45,56 @@ const components: { title: string; href: string; description: string }[] = [
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
   React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  );
-});
+>(({ className, title, children, ...props }, ref) => (
+  <li>
+    <NavigationMenuLink asChild>
+      <a
+        ref={ref}
+        className={cn(
+          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+          className
+        )}
+        {...props}
+      >
+        <div className="text-sm font-medium leading-none">{title}</div>
+        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          {children}
+        </p>
+      </a>
+    </NavigationMenuLink>
+  </li>
+));
 ListItem.displayName = "ListItem";
 
 const Header = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="w-full py-5 sm:px-10 px-5 flex justify-between items-center ">
+    <header
+      className={`fixed w-full z-50 transition-all duration-300  sm:px-10 px-5 flex justify-between items-center ${
+        isScrolled ? "bg-white/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
+      }`}
+    >
       <nav className="flex w-full screen-max-width justify-between items-center">
-        <div className="flex justify-between items-center ">
-          <span className="font-semibold text-2xl text-white  pr-1 cursor-pointer">
-            Demographfy
-          </span>
+        {/* Логотип */}
+        <div className="cursor-pointer pt-5">
+          <Link href={"/"}>
 
-          {/* Logo Button */}
-
-          <svg
-            // Logo
-            xmlns="http://www.w3.org/2000/svg"
-            className="icon icon-tabler icon-tabler-world-pin cursor-pointer"
-            width="44"
-            height="44"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="#ffffff"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M20.972 11.291a9 9 0 1 0 -8.322 9.686" />
-            <path d="M3.6 9h16.8" />
-            <path d="M3.6 15h8.9" />
-            <path d="M11.5 3a17 17 0 0 0 0 18" />
-            <path d="M12.5 3a16.986 16.986 0 0 1 2.578 9.018" />
-            <path d="M21.121 20.121a3 3 0 1 0 -4.242 0c.418 .419 1.125 1.045 2.121 1.879c1.051 -.89 1.759 -1.516 2.121 -1.879z" />
-            <path d="M19 18v.01" />
-          </svg>
+          <Logo />
+          </Link>
         </div>
-        <div className="flex flex-1 justify-center max-sm:hidden ">
+
+        {/* Десктопное меню */}
+        <div className="flex flex-1 justify-center max-sm:hidden pr-[15rem]">
           <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
@@ -123,9 +119,8 @@ const Header = () => {
                         </a>
                       </NavigationMenuLink>
                     </li>
-                    <ListItem href="/docs" title="Информация">
-                      Общая информация о проекте и анализе демографических
-                      процессах.
+                    <ListItem href="/docs" title="Общая информация">
+                      Информация о проекте и анализе демографических процессах.
                     </ListItem>
                     <ListItem href="/docs/installation" title="FAQ">
                       Самые задаваемые вопросы.
@@ -143,15 +138,25 @@ const Header = () => {
                 <NavigationMenuTrigger>Общая информация</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                    {components.map((component) => (
-                      <ListItem
-                        key={component.title}
-                        title={component.title}
-                        href={component.href}
-                      >
-                        {component.description}
-                      </ListItem>
-                    ))}
+                    <ListItem href="/docs/gemini-ai" title="Gemini AI">
+                      Интеграция Gemini AI в проект.
+                    </ListItem>
+                    <ListItem href="/docs/statistics" title="Статистика">
+                      Как используются данные для анализа.
+                    </ListItem>
+                    <ListItem
+                      href="/docs/data-modeling"
+                      title="Моделирование данных"
+                    >
+                      Моделирование данных с помощью GoogleGenerativeAI и
+                      Recharts.
+                    </ListItem>
+                    <ListItem
+                      href="/docs/data-sources"
+                      title="Источник данных и прогнозирование"
+                    >
+                      Использование WorldBank API и прогнозирование данных.
+                    </ListItem>
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -166,52 +171,41 @@ const Header = () => {
           </NavigationMenu>
         </div>
 
-        <div className="flex items-baseline gap-7 max-sm:justify-end max-sm:flex-1 py-2">
-          <Button className="rounded-full h-[48px]">
-            <svg
-              // Button search
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-search"
-              width="26"
-              height="26"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="#ffffff"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
-              <path d="M21 21l-6 -6" />
-            </svg>
-          </Button>
-          <Button className="rounded-full h-[48px]">
-            <svg
-              // Button info
-              xmlns="http://www.w3.org/2000/svg"
-              className="icon icon-tabler icon-tabler-report-search"
-              width="26"
-              height="26"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="#ffffff"
-              fill="none"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h5.697" />
-              <path d="M18 12v-5a2 2 0 0 0 -2 -2h-2" />
-              <path d="M8 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
-              <path d="M8 11h4" />
-              <path d="M8 15h3" />
-              <path d="M16.5 17.5m-2.5 0a2.5 2.5 0 1 0 5 0a2.5 2.5 0 1 0 -5 0" />
-              <path d="M18.5 19.5l2.5 2.5" />
-            </svg>
+        {/* Мобильное меню */}
+        <div className="sm:hidden flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <XIcon /> : <MenuIcon />}
           </Button>
         </div>
       </nav>
+
+      {/* Мобильное меню контент */}
+      {mobileMenuOpen && (
+        <div className="absolute top-full left-0 w-full bg-background shadow-md">
+          <ul className="flex flex-col gap-4 p-5">
+            <li>
+              <Link href="/start"></Link>
+            </li>
+            <li>
+              <Link href="/general"></Link>
+            </li>
+            <li>
+              <Link href="/quiz"></Link>
+            </li>
+            {components.map((component) => (
+              <li key={component.title}>
+                <Link href={component.href} legacyBehavior>
+                  <a className="block text-sm font-medium">{component.title}</a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </header>
   );
 };
