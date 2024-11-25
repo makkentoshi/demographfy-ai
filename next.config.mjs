@@ -5,7 +5,7 @@ const nextConfig = {
   images: {
     unoptimized: true, 
   },
-  assetPrefix: isProd ? '/demographfy-ai' : '',
+  assetPrefix: isProd ? '/demographfy-ai/' : '',
   basePath: isProd ? '/demographfy-ai' : '',
   output: 'export',
 };
