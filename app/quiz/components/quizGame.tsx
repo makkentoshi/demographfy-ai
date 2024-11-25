@@ -78,7 +78,7 @@ export default function QuizGame() {
             Quiz-тест
           </h1>
         </div>
-        <p className="text-blue-500">
+        <p className="text-blue-900 font-semibold text-lg">
           Проверьте свои знания о демографических процессах Казахстана
         </p>
       </div>

@@ -88,8 +88,7 @@ const Header = () => {
         {/* Логотип */}
         <div className="cursor-pointer pt-5">
           <Link href={"/"}>
-
-          <Logo />
+            <Logo />
           </Link>
         </div>
 
@@ -122,14 +121,8 @@ const Header = () => {
                     <ListItem href="/docs" title="Общая информация">
                       Информация о проекте и анализе демографических процессах.
                     </ListItem>
-                    <ListItem href="/docs/installation" title="FAQ">
+                    <ListItem href="/docs/faq" title="FAQ">
                       Самые задаваемые вопросы.
-                    </ListItem>
-                    <ListItem
-                      href="/docs/primitives/typography"
-                      title="Подробнее..."
-                    >
-                      О создателе и проекте.
                     </ListItem>
                   </ul>
                 </NavigationMenuContent>
@@ -141,21 +134,13 @@ const Header = () => {
                     <ListItem href="/docs/gemini-ai" title="Gemini AI">
                       Интеграция Gemini AI в проект.
                     </ListItem>
-                    <ListItem href="/docs/statistics" title="Статистика">
-                      Как используются данные для анализа.
-                    </ListItem>
+
                     <ListItem
                       href="/docs/data-modeling"
                       title="Моделирование данных"
                     >
                       Моделирование данных с помощью GoogleGenerativeAI и
                       Recharts.
-                    </ListItem>
-                    <ListItem
-                      href="/docs/data-sources"
-                      title="Источник данных и прогнозирование"
-                    >
-                      Использование WorldBank API и прогнозирование данных.
                     </ListItem>
                   </ul>
                 </NavigationMenuContent>
@@ -164,6 +149,20 @@ const Header = () => {
                 <Link href="/quiz" legacyBehavior passHref>
                   <NavigationMenuLink className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
                     Quiz-игра
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/scientists" legacyBehavior passHref>
+                  <NavigationMenuLink className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                    Ученые и деятели
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/chat" legacyBehavior passHref>
+                  <NavigationMenuLink className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50">
+                   Demographfy-AI
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -188,13 +187,16 @@ const Header = () => {
         <div className="absolute top-full left-0 w-full bg-background shadow-md">
           <ul className="flex flex-col gap-4 p-5">
             <li>
-              <Link href="/start"></Link>
+              <Link href="/analyse"></Link>
             </li>
             <li>
-              <Link href="/general"></Link>
+              <Link href="/docs"></Link>
             </li>
             <li>
               <Link href="/quiz"></Link>
+            </li>
+            <li>
+              <Link href="/scientists"></Link>
             </li>
             {components.map((component) => (
               <li key={component.title}>

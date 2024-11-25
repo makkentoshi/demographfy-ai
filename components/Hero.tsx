@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const Hero = () => {
@@ -14,9 +15,11 @@ const Hero = () => {
           передовых технологий и данных
         </p>
       </div>
+      <Link href={"/analyse"}>
       <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-lg font-semibold transition-colors">
         Начать анализ
       </button>
+      </Link>
     </div>
     <div className="hero-image lg:w-1/2">
       <div className="relative w-full h-[300px] lg:h-[500px]">

@@ -25,17 +25,17 @@ const TECH_LOGOS = [
   {
     name: "Google Analytics",
     logo: "/google-analytics-svgrepo-com.svg",
-    colorLogo: "/google-analytics-color.svg",
+    colorLogo: "/google-analytics-svgrepo-com.svg",
   },
   {
     name: "Google Adsense",
     logo: "/google-adsense-svgrepo-com.svg",
-    colorLogo: "/google-analytics-color.svg",
+    colorLogo:  "/google-adsense-svgrepo-com.svg",
   },
   {
     name: "Netlify",
     logo: "/netlify-svgrepo-com.svg",
-    colorLogo: "/google-analytics-color.svg",
+    colorLogo: "/netlify-svgrepo-com.svg",
   },
 ];
 

@@ -3,7 +3,7 @@ import React from "react"; // Добавить React и хуки
 import Header from "@/components/Header";
 
 import Hero from "@/components/Hero";
-import MainTheme from "@/components/MainTheme";
+// import MainTheme from "@/components/MainTheme";
 import Footer from "@/components/Footer";
 import AdvantagesSection from "@/components/AdvantagesSection";
 import QuizSection from "@/components/QuizSection";
@@ -16,9 +16,8 @@ export default function Home() {
       <Hero />
       <LogoTicker></LogoTicker>
       <AdvantagesSection></AdvantagesSection>
-      <MainTheme />
+      {/* <MainTheme /> */}
       <QuizSection></QuizSection>
-      <Footer />
     </main>
   );
 }
