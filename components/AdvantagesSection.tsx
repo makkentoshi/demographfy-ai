@@ -8,42 +8,6 @@ import {
   Download,
 } from "lucide-react";
 
-const ADVANTAGES = [
-  {
-    title: "Точность данных",
-    description:
-      "Использование официальных источников и передовых методов анализа",
-    icon: <Database className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Визуализация",
-    description:
-      "Интерактивные графики и карты для наглядного представления данных",
-    icon: <LineChart className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Прогнозирование",
-    description: "AI-powered прогнозы демографических трендов",
-    icon: <TrendingUp className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Доступность",
-    description: "Простой интерфейс для работы со сложными данными",
-    icon: <Users className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Интеграция",
-    description:
-      "Возможность делиться данными и встраивать их в другие системы",
-    icon: <Share2 className="w-8 h-8 text-blue-600" />,
-  },
-  {
-    title: "Экспорт",
-    description: "Выгрузка данных в различных форматах для дальнейшего анализа",
-    icon: <Download className="w-8 h-8 text-blue-600" />,
-  },
-];
-
 const AdvantagesSection = () => {
   return (
     <section className="advantages py-20 bg-white">

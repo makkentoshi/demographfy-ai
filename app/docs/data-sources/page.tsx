@@ -13,7 +13,7 @@ export default function Sources() {
           <CardContent>
             <p className="text-gray-600">
               Our project combines cutting-edge AI technologies to analyze and predict demographic trends
-              in Kazakhstan. We utilize both Google's Gemini AI and World Bank's analytical tools to
+              in Kazakhstan. We utilize both Google&apos;s Gemini AI and World Bank&apos;s analytical tools to
               provide comprehensive insights into population dynamics, migration patterns, and demographic
               changes.
             </p>

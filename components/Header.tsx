@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { texts } from "./text";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,7 +11,6 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import Image from "next/image";
 import Logo from "./Logo";
 import { MenuIcon, XIcon } from "lucide-react";
 

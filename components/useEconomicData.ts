@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -187,7 +188,6 @@ export const useEconomicData = () => {
         let investmentData: InvestmentData[] = [];
 
         let waterData: WaterUsageData[] = [];
-        let climateInfo: ClimateData[] = [];
         let ageData: AgeGroupData[] = [];
 
         if (populationResponse.data && populationResponse.data.length > 1) {
@@ -248,7 +248,7 @@ export const useEconomicData = () => {
             .filter((item: EconomicData) => item.inflationRate !== null)
             .sort((a: EconomicData, b: EconomicData) => a.year - b.year);
 
-          setInflationData(inflationData);
+          setInflationData(inflationData as InflationData[]); // Cast to InflationData[]
         }
         if (exportResponse.data && exportResponse.data.length > 1) {
           exportData = exportResponse.data[1]
@@ -309,17 +309,17 @@ export const useEconomicData = () => {
           setWaterUsageData(waterData);
         }
 
-        if (climateResponse.data && Array.isArray(climateResponse.data)) {
-          // Check if data is an array
-          climateInfo = climateResponse.data.map((item: any) => ({
-            year: parseInt(item.year as string),
-            temperature: item.temperature,
-            precipitation: item.precipitation,
-            humidity: item.humidity,
-          }));
+        // if (climateResponse.data && Array.isArray(climateResponse.data)) {
+        //   // Check if data is an array
+        //   climateInfo = climateResponse.data.map((item: any) => ({
+        //     year: parseInt(item.year as string),
+        //     temperature: item.temperature,
+        //     precipitation: item.precipitation,
+        //     humidity: item.humidity,
+        //   }));
 
-          setClimateData(climateInfo);
-        }
+        //   setClimateData(climateInfo);
+        // }
         if (ageResponse.data && Array.isArray(ageResponse.data)) {
           ageData = ageResponse.data.map((item: AgeGroupData) => ({
             year: item.year,
@@ -751,7 +751,7 @@ export const useEconomicData = () => {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      const prompt = generateInflationPrompt(data);
+      const prompt = generateInflationPrompt(inflationData);
 
       await delay(delayMs);
       const result = await model.generateContent(prompt);
@@ -759,7 +759,12 @@ export const useEconomicData = () => {
 
       console.log("Inflation Gemini Response:", geminiResponse);
 
-      const futurePredictions = parseInflationResponse(geminiResponse);
+      const futurePredictions = parseInflationResponse(geminiResponse).map(
+        (prediction) => ({
+          year: prediction.year,
+          inflationRate: prediction.inflationRate || 0,
+        })
+      );
       console.log("Parsed Inflation Predictions:", futurePredictions);
       setPredictedInflationData(futurePredictions);
     } catch (error) {

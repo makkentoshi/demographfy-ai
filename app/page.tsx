@@ -4,7 +4,6 @@ import Header from "@/components/Header";
 
 import Hero from "@/components/Hero";
 // import MainTheme from "@/components/MainTheme";
-import Footer from "@/components/Footer";
 import AdvantagesSection from "@/components/AdvantagesSection";
 import QuizSection from "@/components/QuizSection";
 import LogoTicker from "@/components/LogoTicker";

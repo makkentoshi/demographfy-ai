@@ -15,7 +15,7 @@ export default function GeminiAI() {
           Использование Gemini-AI
         </h1>
         <p className="text-xl text-gray-600">
-          Прогрессивные демографические прогнозы на основе технологий Google's
+          Прогрессивные демографические прогнозы на основе технологий Google&apos;s
           Gemini AI
         </p>
       </div>

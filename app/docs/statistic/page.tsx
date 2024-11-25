@@ -15,7 +15,7 @@ export default function WorldBankAI() {
           World Bank AI Demographics Analysis
         </h1>
         <p className="text-xl text-gray-600">
-          Comprehensive demographic analysis using World Bank's AI tools
+          Comprehensive demographic analysis using World Bank&apos;s AI tools
         </p>
       </div>
 
